@@ -1,0 +1,3 @@
+URL trước khi finish: https://www.saucedemo.com/checkout-step-two.html
+Waiting for FINISH button to be clickable...
+FINISH button found. Clicking now.
