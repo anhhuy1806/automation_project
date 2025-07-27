@@ -15,32 +15,13 @@ class CheckoutPage(BasePage):
         self.confirm_message = (By.CLASS_NAME, "complete-header")
 
     def fill_checkout_info(self, fname, lname, zip):
-        WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.firstname)
-        )
         self.type(self.firstname, fname)
         self.type(self.lastname, lname)
         self.type(self.zip, zip)
         self.click(self.next)
 
-        # Wait until moved to step two
-        WebDriverWait(self.driver, 10).until(
-            EC.url_contains("checkout-step-two")
-        )
-
     def finish_order(self):
-        print("Waiting for FINISH button to be clickable...")
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located(self.finish)
-        )
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.finish)
-        )
-        print("FINISH button found. Clicking now.")
         self.driver.execute_script("arguments[0].click();", self.find(self.finish))
 
     def get_confirmation_msg(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.confirm_message)
-        )
         return self.find(self.confirm_message).text

@@ -10,8 +10,4 @@ class CartPage(BasePage):
         self.checkout_button = (By.ID, "checkout")
 
     def click_checkout(self):
-        # Chờ đến khi nút checkout có thể click được
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.checkout_button)
-        )
         self.click(self.checkout_button)
