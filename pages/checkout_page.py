@@ -23,9 +23,17 @@ class CheckoutPage(BasePage):
         self.type(self.zip, zip)
         self.click(self.next)
 
+        # Wait until moved to step two
+        WebDriverWait(self.driver, 10).until(
+            EC.url_contains("checkout-step-two")
+        )
+
     def finish_order(self):
         print("Waiting for FINISH button to be clickable...")
-        WebDriverWait(self.driver, 20).until(
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(self.finish)
+        )
+        WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable(self.finish)
         )
         print("FINISH button found. Clicking now.")
