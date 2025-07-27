@@ -3,24 +3,24 @@ from selenium import webdriver
 import allure
 import os
 from datetime import datetime
+from utils.config_reader import ConfigReader
 
 class BaseTest:
-    def setup_method(self, method):
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, request):
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
+        self.driver.get(ConfigReader.get_base_url())
+        request.cls.driver = self.driver
 
-    def teardown_method(self, method):
-        test_name = method.__name__
-        screenshot_dir = "screenshots"
-        os.makedirs(screenshot_dir, exist_ok=True)
-
-        # Tên file ảnh theo timestamp
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        screenshot_path = os.path.join(screenshot_dir, f"{test_name}_{timestamp}.png")
-
-        # Chụp ảnh khi test PASS hoặc FAIL
-        self.driver.save_screenshot(screenshot_path)
-        with open(screenshot_path, "rb") as image_file:
-            allure.attach(image_file.read(), name=test_name, attachment_type=allure.attachment_type.PNG)
-
+        #tạo folder screenshots
+        os.makedirs("screenshots", exist_ok=True)
+        yield
+        
+        # Screenshot sau mỗi test (pass hoặc fail)
+        test_name = request.node.name #lấy tên từ pytest
+        filename = f"{test_name}.png" #tên_test.png
+        filepath = os.path.join("screenshots", filename) #bỏ vào file screenshot
+        self.driver.save_screenshot(filepath) #command screenshot
+        allure.attach.file(filepath, name=test_name, attachment_type=allure.attachment_type.PNG) #add vào allure-result
         self.driver.quit()
